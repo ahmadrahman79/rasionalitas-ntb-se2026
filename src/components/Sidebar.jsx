@@ -1,15 +1,12 @@
 import React from 'react';
 import { 
   Calculator, 
-  History, 
-  BookOpen, 
+  Table, 
   Layers, 
-  ShieldCheck, 
-  Calendar, 
-  MessageSquare, 
-  Settings,
+  BookOpen, 
   Sparkles,
-  X
+  X,
+  History
 } from 'lucide-react';
 import { FlowerVaseIllustration } from './AestheticIllustrations';
 
@@ -24,78 +21,41 @@ export const Sidebar = ({
   const menuItems = [
     {
       id: 'calculator',
-      label: 'Kalkulator NTB',
-      frenchSub: 'Mon profil',
+      label: 'Kalkulator & Uji NTB',
+      desc: 'All-in-One Dashboard',
       icon: Calculator,
-      badge: null,
+      badge: historyCount > 0 ? `${historyCount} Riwayat` : null,
       isActive: activeTab === 'calculator',
       action: () => setActiveTab('calculator')
     },
     {
-      id: 'history',
-      label: 'Riwayat Perhitungan',
-      frenchSub: 'Mes formations',
-      icon: History,
-      badge: historyCount > 0 ? historyCount : null,
-      isActive: activeTab === 'history',
-      action: () => setActiveTab('history')
-    },
-    {
-      id: 'formula',
-      label: 'Panduan & Rumus',
-      frenchSub: 'Sessions suivies',
-      icon: BookOpen,
-      badge: 'SE26',
-      isActive: activeTab === 'formula',
-      action: () => {
-        setActiveTab('calculator');
-        onOpenFormula();
-      }
+      id: 'table',
+      label: 'Tabel Standar SE2026',
+      desc: 'Rentang Wajar Kategori A-U',
+      icon: Table,
+      badge: '19 Kategori',
+      isActive: activeTab === 'table',
+      action: () => setActiveTab('table')
     },
     {
       id: 'simulations',
       label: 'Simulasi Sektor',
-      frenchSub: 'Projets',
+      desc: 'Contoh Data Kasus',
       icon: Layers,
       badge: 4,
       isActive: activeTab === 'simulations',
       action: () => setActiveTab('simulations')
     },
     {
-      id: 'validations',
-      label: 'Kaidah SE2026',
-      frenchSub: 'Certifications',
-      icon: ShieldCheck,
-      badge: 2,
-      isActive: activeTab === 'validations',
-      action: () => setActiveTab('validations')
-    },
-    {
-      id: 'calendar',
-      label: 'Jadwal Sensus',
-      frenchSub: 'Calendrier',
-      icon: Calendar,
-      badge: null,
+      id: 'formula',
+      label: 'Panduan & Rumus',
+      desc: 'Kaidah Lengkap NTB',
+      icon: BookOpen,
+      badge: 'BPS SE26',
       isActive: false,
-      action: () => {}
-    },
-    {
-      id: 'notes',
-      label: 'Catatan & Validasi',
-      frenchSub: 'Messages',
-      icon: MessageSquare,
-      badge: 0,
-      isActive: false,
-      action: () => {}
-    },
-    {
-      id: 'settings',
-      label: 'Pengaturan',
-      frenchSub: 'Paramètres',
-      icon: Settings,
-      badge: null,
-      isActive: false,
-      action: () => {}
+      action: () => {
+        onOpenFormula();
+      }
     },
   ];
 
@@ -138,7 +98,7 @@ export const Sidebar = ({
           </div>
 
           {/* Navigation Menu */}
-          <nav className="space-y-1.5">
+          <nav className="space-y-2">
             {menuItems.map((item) => {
               const Icon = item.icon;
               return (
@@ -148,20 +108,27 @@ export const Sidebar = ({
                     item.action();
                     setIsMobileOpen(false);
                   }}
-                  className={`w-full flex items-center justify-between px-4 py-2.5 rounded-2xl text-sm font-medium transition-all duration-200 text-left ${
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-200 text-left ${
                     item.isActive
                       ? 'bg-white text-[#5B58DE] shadow-md font-semibold translate-x-1'
                       : 'text-white/85 hover:text-white hover:bg-white/10'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Icon className={`w-4 h-4 ${item.isActive ? 'text-[#5B58DE]' : 'text-white/90'}`} />
-                    <span>{item.label}</span>
+                    <div className={`p-1.5 rounded-xl ${item.isActive ? 'bg-indigo-50 text-[#5B58DE]' : 'bg-white/10 text-white'}`}>
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <span className="block leading-tight">{item.label}</span>
+                      <span className={`text-[10px] block mt-0.5 ${item.isActive ? 'text-indigo-400' : 'text-white/60'}`}>
+                        {item.desc}
+                      </span>
+                    </div>
                   </div>
 
                   {item.badge !== null && (
                     <span
-                      className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
+                      className={`text-[11px] px-2 py-0.5 rounded-full font-bold ${
                         item.isActive
                           ? 'bg-[#5B58DE]/15 text-[#5B58DE]'
                           : 'bg-white/20 text-white'
@@ -176,10 +143,10 @@ export const Sidebar = ({
           </nav>
         </div>
 
-        {/* Bottom Aesthetic Plant / Flower Vase Illustration (Matching the exact design) */}
+        {/* Bottom Aesthetic Plant / Flower Vase Illustration */}
         <div className="relative pt-4 flex flex-col items-center justify-end pointer-events-none select-none">
           <FlowerVaseIllustration className="w-44 -mb-2 drop-shadow-lg" />
-          <div className="w-full text-center py-2 bg-[#4D4AC7]/40 text-[11px] text-white/70">
+          <div className="w-full text-center py-2.5 bg-[#4D4AC7]/40 text-[11px] text-white/70">
             SE2026 • BPS NTB Standard
           </div>
         </div>

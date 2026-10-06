@@ -19,7 +19,7 @@ import {
   exportHistoryToCSV,
   KATEGORI_LAPANGAN_USAHA
 } from './utils/formatters';
-import { Layers, ShieldCheck, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Layers, Table, CheckCircle2, ArrowRight, Sparkles } from 'lucide-react';
 
 const INITIAL_FORM_STATE = {
   namaUsaha: '',
@@ -197,6 +197,7 @@ export function App() {
     if (SAMPLE_PRESETS[presetKey]) {
       setFormData(SAMPLE_PRESETS[presetKey]);
       setActiveTab('calculator');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -257,7 +258,78 @@ export function App() {
           />
 
           {/* Conditional Views based on Tab */}
-          {activeTab === 'simulations' ? (
+          {activeTab === 'table' ? (
+            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-soft mb-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-[#5B58DE] flex items-center justify-center">
+                    <Table className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-800">Tabel Standar Rentang Wajar Rasio NTB (SE2026)</h3>
+                    <p className="text-xs text-slate-500">Rentang nilai batas MIN & MAX per Kategori Lapangan Usaha (KBLI)</p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setActiveTab('calculator')}
+                  className="px-4 py-2 bg-[#5B58DE] text-white rounded-xl text-xs font-bold hover:bg-[#4C49CC] transition self-start sm:self-auto"
+                >
+                  Kembali ke Kalkulator
+                </button>
+              </div>
+
+              <div className="overflow-x-auto rounded-2xl border border-slate-200">
+                <table className="w-full text-xs text-left">
+                  <thead className="bg-[#B45309] text-white font-bold">
+                    <tr>
+                      <th className="px-4 py-3">Kategori</th>
+                      <th className="px-4 py-3">Nama Lapangan Usaha</th>
+                      <th className="px-4 py-3 text-center">MIN</th>
+                      <th className="px-4 py-3 text-center">MAX</th>
+                      <th className="px-4 py-3 text-center">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {KATEGORI_LAPANGAN_USAHA.map((kat, idx) => (
+                      <tr 
+                        key={kat.kode} 
+                        className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}
+                      >
+                        <td className="px-4 py-3 font-bold text-[#5B58DE]">
+                          Kategori {kat.kode}
+                        </td>
+                        <td className="px-4 py-3 font-medium text-slate-800">
+                          {kat.nama}
+                        </td>
+                        <td className="px-4 py-3 text-center font-mono font-bold text-slate-700">
+                          {kat.dianalisis ? formatDecimal(kat.min) : '—'}
+                        </td>
+                        <td className="px-4 py-3 text-center font-mono font-bold text-slate-700">
+                          {kat.dianalisis ? formatDecimal(kat.max) : '—'}
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          {kat.dianalisis ? (
+                            <button
+                              onClick={() => {
+                                setFormData(prev => ({ ...prev, kategoriKode: kat.kode }));
+                                setActiveTab('calculator');
+                              }}
+                              className="px-2.5 py-1 text-xs font-bold text-[#5B58DE] hover:bg-indigo-50 rounded-lg border border-indigo-200 transition"
+                            >
+                              Gunakan
+                            </button>
+                          ) : (
+                            <span className="text-[10px] text-slate-400 italic">Dikecualikan</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ) : activeTab === 'simulations' ? (
             <div className="bg-white rounded-3xl p-6 md:p-8 shadow-soft mb-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-[#5B58DE] flex items-center justify-center">
@@ -302,53 +374,10 @@ export function App() {
                 })}
               </div>
             </div>
-          ) : activeTab === 'validations' ? (
-            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-soft mb-6">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                  <ShieldCheck className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-slate-800">Kaidah Validasi Sensus Ekonomi 2026</h3>
-                  <p className="text-xs text-slate-500">Pedoman pemeriksaan kewajaran rasio nilai tambah di lapangan</p>
-                </div>
-              </div>
-
-              <div className="space-y-4 text-xs sm:text-sm text-slate-700">
-                <div className="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-100 flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-                  <div>
-                    <h5 className="font-bold text-emerald-900">1. Rumus Rasio Kewajaran (Bentuk Desimal Murni)</h5>
-                    <p className="text-xs text-emerald-800 mt-0.5">
-                      Rasio dihitung dengan membagi Nilai Tambah Bruto (NTB) terhadap Output Bersih: <code>NTB / (Nilai Produksi - Biaya Pembelian Barang Terjual)</code>. Nilai disajikan dalam bentuk desimal (bukan persentase).
-                    </p>
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-indigo-50/50 border border-indigo-100 flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-[#5B58DE] shrink-0 mt-0.5" />
-                  <div>
-                    <h5 className="font-bold text-indigo-900">2. Rentang Nilai Wajar per Lapangan Usaha</h5>
-                    <p className="text-xs text-indigo-800 mt-0.5">
-                      Setiap kategori lapangan usaha memiliki batas MIN dan MAX yang berbeda. Data dikategorikan <strong>Wajar</strong> apabila rasio berada di antara MIN dan MAX kategori terkait.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-amber-50/50 border border-amber-100 flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-                  <div>
-                    <h5 className="font-bold text-amber-900">3. Kategori P (Pendidikan) & U (Badan Internasional) Dikecualikan</h5>
-                    <p className="text-xs text-amber-800 mt-0.5">
-                      Kategori P dan U tidak dianalisis rasionalitasnya dalam cakupan Sensus Ekonomi 2026.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
           ) : (
-            /* Main Content: Form + Result + Rationality Checker */
+            /* All-in-One Dashboard: Form + Result + Uji Kewajaran Sektor + Riwayat Perhitungan */
             <div className="space-y-6 mb-6">
+              {/* Top Row: Form Input (Left) & Result + Guide Cards (Right) */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 {/* Left Column: Form Input (Span 7 or 8) */}
                 <div className="lg:col-span-7 xl:col-span-8">
@@ -371,7 +400,7 @@ export function App() {
                 </div>
               </div>
 
-              {/* Kolom Cek Kewajaran Lapangan Usaha (Di Bagian Bawah Perhitungan NTB) */}
+              {/* Kolom Cek Kewajaran Lapangan Usaha (Searchable Combobox & Range Bar) */}
               <RationalityChecker
                 kategoriKode={formData.kategoriKode || 'C'}
                 setKategoriKode={(code) => setFormData(prev => ({ ...prev, kategoriKode: code }))}
@@ -380,7 +409,7 @@ export function App() {
             </div>
           )}
 
-          {/* Bottom Card: History List */}
+          {/* Bottom Card: History List (Terintegrasi Langsung di 1 Halaman) */}
           <HistoryList
             history={history}
             searchQuery={searchQuery}
