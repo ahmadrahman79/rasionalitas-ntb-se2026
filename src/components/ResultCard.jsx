@@ -5,11 +5,11 @@ import {
   TrendingDown, 
   AlertTriangle, 
   CheckCircle2, 
-  Percent, 
+  Layers,
   ArrowUpRight,
-  PieChart
+  Info
 } from 'lucide-react';
-import { formatRupiah } from '../utils/formatters';
+import { formatRupiah, formatDecimal } from '../utils/formatters';
 
 export const ResultCard = ({ calculationResult }) => {
   const {
@@ -21,6 +21,9 @@ export const ResultCard = ({ calculationResult }) => {
     totalBiaya,
     nilaiTambah,
     rasio,
+    rasioFormatted,
+    kategoriKode,
+    kategoriInfo,
     status,
     statusLabel,
     statusColor,
@@ -52,18 +55,11 @@ export const ResultCard = ({ calculationResult }) => {
       icon: TrendingDown,
       badge: 'bg-rose-500 text-white',
     },
-    indigo: {
-      bg: 'bg-indigo-50',
-      text: 'text-indigo-700',
-      border: 'border-indigo-200',
-      icon: TrendingUp,
-      badge: 'bg-indigo-500 text-white',
-    },
     gray: {
       bg: 'bg-slate-50',
       text: 'text-slate-600',
       border: 'border-slate-200',
-      icon: Calculator,
+      icon: Info,
       badge: 'bg-slate-400 text-white',
     }
   };
@@ -73,7 +69,7 @@ export const ResultCard = ({ calculationResult }) => {
 
   return (
     <div className="bg-white rounded-3xl p-6 md:p-7 shadow-soft mb-6">
-      {/* Title Header (Matching Informations de paiement) */}
+      {/* Title Header */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-base md:text-lg font-bold text-slate-800 tracking-tight">
           Hasil Nilai Tambah Bruto
@@ -83,7 +79,7 @@ export const ResultCard = ({ calculationResult }) => {
         </span>
       </div>
 
-      {/* Main Result Display Box (Styled like payment card dummy in reference) */}
+      {/* Main Result Display Box */}
       <div className="bg-[#F8F9FD] rounded-2xl p-4 border border-slate-100 mb-4">
         <span className="text-xs font-medium text-slate-400 block mb-1">
           Estimasi Nilai Tambah Bruto (NTB)
@@ -100,7 +96,7 @@ export const ResultCard = ({ calculationResult }) => {
         </div>
       </div>
 
-      {/* Rasio & Status Indicator Badge */}
+      {/* Rasio (Desimal Murni) & Status Kewajaran */}
       <div className={`p-4 rounded-2xl border ${currentStyle.bg} ${currentStyle.border} mb-4 transition-all`}>
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
@@ -110,9 +106,9 @@ export const ResultCard = ({ calculationResult }) => {
             </span>
           </div>
 
-          <div className="flex items-center gap-1 bg-white px-2.5 py-1 rounded-full shadow-xs text-xs font-extrabold text-slate-800">
-            <Percent className="w-3 h-3 text-[#5B58DE]" />
-            <span>{rasio}%</span>
+          <div className="flex items-center gap-1.5 bg-white px-3 py-1 rounded-xl shadow-xs text-xs font-black text-slate-900 border border-slate-200/80">
+            <span className="text-[10px] text-slate-400 font-semibold">Rasio:</span>
+            <span className="font-mono text-sm text-[#5B58DE]">{rasioFormatted}</span>
           </div>
         </div>
 
@@ -130,10 +126,15 @@ export const ResultCard = ({ calculationResult }) => {
 
         {biayaBarangTerjual > 0 && (
           <div className="flex items-center justify-between text-slate-600 py-1 border-b border-slate-100">
-            <span>Biaya Pembelian Barang Terjual :</span>
+            <span>Biaya Beli Barang Terjual :</span>
             <span className="font-semibold text-rose-600">- {formatRupiah(biayaBarangTerjual)}</span>
           </div>
         )}
+
+        <div className="flex items-center justify-between text-slate-600 py-1 border-b border-slate-100 bg-indigo-50/40 px-2 rounded-lg font-semibold">
+          <span className="text-indigo-900">Output Bersih (Pembagi Rasio) :</span>
+          <span className="text-indigo-950">{formatRupiah(pendapatanBersihBarang)}</span>
+        </div>
 
         <div className="flex items-center justify-between text-slate-600 py-1 border-b border-slate-100">
           <span>Biaya Produksi (Bahan Baku) :</span>
@@ -146,7 +147,7 @@ export const ResultCard = ({ calculationResult }) => {
         </div>
 
         <div className="flex items-center justify-between pt-1 font-bold text-slate-800">
-          <span>Total Nilai Tambah Bruto :</span>
+          <span>Nilai Tambah Bruto (NTB) :</span>
           <span className={nilaiTambah < 0 ? 'text-rose-600' : 'text-[#5B58DE]'}>
             {formatRupiah(nilaiTambah)}
           </span>

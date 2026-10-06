@@ -5,15 +5,14 @@ import {
   FileSpreadsheet, 
   ChevronRight, 
   RotateCcw, 
-  Clock, 
   Coins, 
-  TrendingUp, 
   TrendingDown, 
-  AlertCircle,
-  FolderOpen
+  FolderOpen,
+  CheckCircle2,
+  AlertTriangle
 } from 'lucide-react';
 import { DeskLampIllustration } from './AestheticIllustrations';
-import { formatRupiah } from '../utils/formatters';
+import { formatRupiah, formatDecimal } from '../utils/formatters';
 
 export const HistoryList = ({ 
   history, 
@@ -29,7 +28,8 @@ export const HistoryList = ({
     const q = searchQuery.toLowerCase();
     return (
       (item.namaUsaha && item.namaUsaha.toLowerCase().includes(q)) ||
-      (item.sektor && item.sektor.toLowerCase().includes(q)) ||
+      (item.kategoriNama && item.kategoriNama.toLowerCase().includes(q)) ||
+      (item.kategoriKode && item.kategoriKode.toLowerCase().includes(q)) ||
       (item.statusLabel && item.statusLabel.toLowerCase().includes(q)) ||
       (item.timestampFormatted && item.timestampFormatted.toLowerCase().includes(q))
     );
@@ -42,14 +42,14 @@ export const HistoryList = ({
         <div>
           <div className="flex items-center gap-2">
             <h3 className="text-xl font-bold text-slate-800 tracking-tight">
-              Riwayat Perhitungan
+              Riwayat Perhitungan & Uji Kewajaran
             </h3>
             <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
               {history.length} data
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            Daftar kalkulasi Nilai Tambah Bruto yang tersimpan secara lokal.
+            Daftar kalkulasi Nilai Tambah Bruto dan status kewajaran terhadap rentang MIN - MAX kategori usaha.
           </p>
         </div>
 
@@ -91,7 +91,10 @@ export const HistoryList = ({
             </div>
           ) : (
             filteredHistory.map((item, index) => {
+              const isWajar = item.statusColor === 'green';
               const isNegative = item.nilaiTambah < 0;
+              const ratioDisplay = item.rasioFormatted || formatDecimal(item.rasio);
+
               return (
                 <div
                   key={item.id || index}
@@ -99,31 +102,48 @@ export const HistoryList = ({
                 >
                   {/* Left: Icon & Info */}
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-[#5B58DE] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform ${
+                      isNegative 
+                        ? 'bg-rose-50 text-rose-500' 
+                        : isWajar 
+                        ? 'bg-emerald-50 text-emerald-600' 
+                        : 'bg-amber-50 text-amber-600'
+                    }`}>
                       {isNegative ? (
-                        <TrendingDown className="w-5 h-5 text-rose-500" />
+                        <TrendingDown className="w-5 h-5" />
+                      ) : isWajar ? (
+                        <CheckCircle2 className="w-5 h-5" />
                       ) : (
-                        <Coins className="w-5 h-5 text-[#5B58DE]" />
+                        <AlertTriangle className="w-5 h-5" />
                       )}
                     </div>
 
                     <div className="min-w-0">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <h4 className="text-sm font-bold text-slate-800 truncate">
                           {item.namaUsaha || `Perhitungan #${history.length - index}`}
                         </h4>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-50 text-[#5B58DE]">
+                          Kategori {item.kategoriKode || 'C'}
+                        </span>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                          isNegative 
-                            ? 'bg-rose-100 text-rose-700' 
-                            : 'bg-emerald-100 text-emerald-700'
+                          isWajar
+                            ? 'bg-emerald-100 text-emerald-700' 
+                            : isNegative
+                            ? 'bg-rose-100 text-rose-700'
+                            : 'bg-amber-100 text-amber-700'
                         }`}>
-                          Rasio {item.rasio}%
+                          Rasio {ratioDisplay}
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
+                      <div className="flex items-center gap-2 text-xs text-slate-500 mt-1 flex-wrap">
                         <span className="font-semibold text-slate-800">
                           NTB: {formatRupiah(item.nilaiTambah)}
+                        </span>
+                        <span>•</span>
+                        <span className="text-xs text-slate-600 font-medium">
+                          {item.statusLabel}
                         </span>
                         <span>•</span>
                         <span className="text-[11px] text-slate-400">
@@ -165,11 +185,11 @@ export const HistoryList = ({
           )}
         </div>
 
-        {/* Right side desk lamp illustration (Persis di card bawah desain acuan) */}
+        {/* Right side desk lamp illustration */}
         <div className="hidden lg:flex flex-col items-center justify-end p-2 shrink-0 border-l border-slate-100 pl-6 select-none pointer-events-none">
           <DeskLampIllustration className="w-44 h-auto drop-shadow-sm" />
           <div className="text-[11px] font-semibold text-slate-400 mt-1">
-            Riwayat Tersimpan Otomatis
+            Riwayat & Uji Kewajaran
           </div>
         </div>
       </div>
