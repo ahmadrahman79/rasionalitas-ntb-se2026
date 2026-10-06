@@ -5,8 +5,7 @@ import {
   Layers, 
   BookOpen, 
   Sparkles,
-  X,
-  History
+  X
 } from 'lucide-react';
 import { FlowerVaseIllustration } from './AestheticIllustrations';
 
@@ -24,14 +23,14 @@ export const Sidebar = ({
       label: 'Kalkulator & Uji NTB',
       desc: 'All-in-One Dashboard',
       icon: Calculator,
-      badge: historyCount > 0 ? `${historyCount} Riwayat` : null,
+      badge: historyCount > 0 ? `${historyCount}` : null,
       isActive: activeTab === 'calculator',
       action: () => setActiveTab('calculator')
     },
     {
       id: 'table',
       label: 'Tabel Standar SE2026',
-      desc: 'Rentang Wajar Kategori A-U',
+      desc: 'Rentang Wajar Kategori A–U',
       icon: Table,
       badge: '19 Kategori',
       isActive: activeTab === 'table',
@@ -40,7 +39,7 @@ export const Sidebar = ({
     {
       id: 'simulations',
       label: 'Simulasi Sektor',
-      desc: 'Contoh Data Kasus',
+      desc: 'Preset Contoh Usaha',
       icon: Layers,
       badge: 4,
       isActive: activeTab === 'simulations',
@@ -49,9 +48,9 @@ export const Sidebar = ({
     {
       id: 'formula',
       label: 'Panduan & Rumus',
-      desc: 'Kaidah Lengkap NTB',
+      desc: 'Kaidah Konsep NTB',
       icon: BookOpen,
-      badge: 'BPS SE26',
+      badge: null,
       isActive: false,
       action: () => {
         onOpenFormula();
@@ -71,27 +70,28 @@ export const Sidebar = ({
 
       {/* Sidebar Container */}
       <aside 
-        className={`fixed top-0 left-0 bottom-0 z-50 w-72 bg-[#5B58DE] text-white flex flex-col justify-between overflow-hidden shadow-2xl transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed top-0 left-0 bottom-0 z-50 w-72 bg-[#5B58DE] text-white flex flex-col justify-between shadow-2xl transition-transform duration-300 ease-in-out lg:translate-x-0 overflow-y-auto overflow-x-hidden ${
           isMobileOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Top Section */}
-        <div className="p-6 pb-2">
+        <div className="p-5 sm:p-6 pb-2">
           {/* Header Dashboard */}
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
             <div>
-              <span className="text-xs font-medium text-white/70 uppercase tracking-wider block">Dashboard</span>
-              <h1 className="text-xl font-bold tracking-tight text-white flex items-center gap-1.5 mt-0.5">
+              <span className="text-[11px] font-semibold text-white/70 uppercase tracking-wider block">Dashboard</span>
+              <h1 className="text-xl font-extrabold tracking-tight text-white flex items-center gap-1.5 mt-0.5">
                 Rasionalitas NTB
                 <Sparkles className="w-4 h-4 text-pink-300 animate-pulse" />
               </h1>
-              <p className="text-xs text-white/80 font-normal">Sensus Ekonomi 2026 (SE2026)</p>
+              <p className="text-xs text-white/80 font-medium">Sensus Ekonomi 2026</p>
             </div>
 
             {/* Mobile close button */}
             <button
               onClick={() => setIsMobileOpen(false)}
-              className="lg:hidden p-1.5 text-white/80 hover:text-white rounded-lg hover:bg-white/10"
+              className="lg:hidden p-2 text-white/80 hover:text-white rounded-xl hover:bg-white/10 transition"
+              aria-label="Tutup Menu"
             >
               <X className="w-5 h-5" />
             </button>
@@ -108,19 +108,19 @@ export const Sidebar = ({
                     item.action();
                     setIsMobileOpen(false);
                   }}
-                  className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-200 text-left ${
+                  className={`w-full flex items-center justify-between px-3.5 py-3 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-200 text-left ${
                     item.isActive
-                      ? 'bg-white text-[#5B58DE] shadow-md font-semibold translate-x-1'
+                      ? 'bg-white text-[#5B58DE] shadow-lg font-bold translate-x-1'
                       : 'text-white/85 hover:text-white hover:bg-white/10'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className={`p-1.5 rounded-xl ${item.isActive ? 'bg-indigo-50 text-[#5B58DE]' : 'bg-white/10 text-white'}`}>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className={`p-2 rounded-xl shrink-0 ${item.isActive ? 'bg-indigo-50 text-[#5B58DE]' : 'bg-white/10 text-white'}`}>
                       <Icon className="w-4 h-4" />
                     </div>
-                    <div>
-                      <span className="block leading-tight">{item.label}</span>
-                      <span className={`text-[10px] block mt-0.5 ${item.isActive ? 'text-indigo-400' : 'text-white/60'}`}>
+                    <div className="min-w-0">
+                      <span className="block leading-tight truncate">{item.label}</span>
+                      <span className={`text-[10px] block mt-0.5 truncate font-normal ${item.isActive ? 'text-indigo-400 font-medium' : 'text-white/60'}`}>
                         {item.desc}
                       </span>
                     </div>
@@ -128,7 +128,7 @@ export const Sidebar = ({
 
                   {item.badge !== null && (
                     <span
-                      className={`text-[11px] px-2 py-0.5 rounded-full font-bold ${
+                      className={`text-[10px] px-2 py-0.5 rounded-full font-bold shrink-0 ml-2 ${
                         item.isActive
                           ? 'bg-[#5B58DE]/15 text-[#5B58DE]'
                           : 'bg-white/20 text-white'
@@ -144,9 +144,9 @@ export const Sidebar = ({
         </div>
 
         {/* Bottom Aesthetic Plant / Flower Vase Illustration */}
-        <div className="relative pt-4 flex flex-col items-center justify-end pointer-events-none select-none">
-          <FlowerVaseIllustration className="w-44 -mb-2 drop-shadow-lg" />
-          <div className="w-full text-center py-2.5 bg-[#4D4AC7]/40 text-[11px] text-white/70">
+        <div className="relative pt-2 flex flex-col items-center justify-end select-none mt-auto">
+          <FlowerVaseIllustration className="w-40 h-auto -mb-2 drop-shadow-md opacity-90" />
+          <div className="w-full text-center py-2 bg-[#4D4AC7]/60 text-[10px] font-medium text-white/75 tracking-wider uppercase border-t border-white/10">
             SE2026 • BPS NTB Standard
           </div>
         </div>

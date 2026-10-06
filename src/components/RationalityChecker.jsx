@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
-  Building2, 
   CheckCircle2, 
   AlertTriangle, 
   AlertCircle, 
@@ -56,15 +55,32 @@ export const RationalityChecker = ({
     }
   }, [isOpen]);
 
-  // Filter categories by search term (Abjad or Name)
+  // SMART SEARCH LOGIC:
+  // - If single letter (e.g. "T", "C", "A"): filter strictly by category CODE (Kategori T, C, A)
+  // - If multiple letters (e.g. "pengolahan", "dagang", "hotel"): filter by category name & description
   const filteredCategories = KATEGORI_LAPANGAN_USAHA.filter((kat) => {
     if (!searchTerm) return true;
-    const term = searchTerm.toLowerCase().trim();
+    const cleanTerm = searchTerm.toLowerCase().trim();
+    if (!cleanTerm) return true;
+
+    // Single character search -> match strictly the category letter code
+    if (cleanTerm.length === 1) {
+      return kat.kode.toLowerCase() === cleanTerm;
+    }
+
+    // Match "kategori X" or "kat X"
+    if (cleanTerm.startsWith('kat ') || cleanTerm.startsWith('kategori ')) {
+      const targetLetter = cleanTerm.replace(/^(kat|kategori)\s*/, '').trim();
+      if (targetLetter.length === 1) {
+        return kat.kode.toLowerCase() === targetLetter;
+      }
+    }
+
+    // Multiple characters search -> match code, name, or description
     return (
-      kat.kode.toLowerCase() === term ||
-      kat.kode.toLowerCase().includes(term) ||
-      kat.nama.toLowerCase().includes(term) ||
-      kat.singkat.toLowerCase().includes(term)
+      kat.kode.toLowerCase() === cleanTerm ||
+      kat.nama.toLowerCase().includes(cleanTerm) ||
+      kat.singkat.toLowerCase().includes(cleanTerm)
     );
   });
 
@@ -83,6 +99,8 @@ export const RationalityChecker = ({
   const minPos = getPercentPos(minVal);
   const maxPos = getPercentPos(maxVal);
   const currentPos = getPercentPos(rasio);
+
+  const alphabetList = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'Q', 'R', 'S', 'T'];
 
   return (
     <div className="bg-white rounded-3xl p-6 md:p-8 shadow-soft border border-indigo-50/80">
@@ -136,7 +154,7 @@ export const RationalityChecker = ({
           onClick={() => setIsOpen(!isOpen)}
           className={`w-full bg-[#FAF9FD] hover:bg-[#F4F2FC] border text-left rounded-2xl px-4 py-3.5 flex items-center justify-between gap-3 transition-all ${
             isOpen 
-              ? 'border-[#5B58DE] ring-2 ring-[#5B58DE]/20 shadow-md' 
+              ? 'border-[#5B58DE] ring-2 ring-[#5B58DE]/20 shadow-md bg-white' 
               : 'border-slate-200 shadow-xs'
           }`}
         >
@@ -162,53 +180,62 @@ export const RationalityChecker = ({
 
         {/* Dropdown Menu Popover */}
         {isOpen && (
-          <div className="absolute z-50 left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden animate-fadeIn">
+          <div className="absolute z-50 left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
             {/* Search Input Box */}
-            <div className="p-3 border-b border-slate-100 bg-slate-50/70">
+            <div className="p-3 border-b border-slate-100 bg-slate-50/90">
               <div className="relative">
                 <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   ref={searchInputRef}
                   type="text"
-                  placeholder="Ketik abjad kategori (A, C, G...) atau nama usaha..."
+                  placeholder="Ketik abjad kategori (A, C, G, T...) atau nama usaha..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-9 pr-8 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5B58DE]/30 focus:border-[#5B58DE] text-slate-800 placeholder-slate-400"
+                  className="w-full pl-9 pr-8 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5B58DE]/30 focus:border-[#5B58DE] text-slate-800 placeholder-slate-400 font-medium"
                 />
                 {searchTerm && (
                   <button
+                    type="button"
                     onClick={() => setSearchTerm('')}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-slate-400 hover:text-slate-600 rounded-full"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
                 )}
               </div>
 
-              {/* Quick Alphabet Pills for Fast Filtering */}
-              <div className="flex items-center gap-1 overflow-x-auto pt-2 pb-1 scrollbar-none text-[11px]">
-                <span className="text-[10px] text-slate-400 font-semibold uppercase shrink-0 mr-1">Abjad:</span>
-                {['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'Q', 'R', 'S', 'T'].map((letter) => (
-                  <button
-                    key={letter}
-                    onClick={() => setSearchTerm(letter)}
-                    className={`px-2 py-0.5 rounded-md font-bold transition shrink-0 ${
-                      searchTerm.toUpperCase() === letter
-                        ? 'bg-[#5B58DE] text-white'
-                        : 'bg-white text-slate-600 hover:bg-indigo-50 hover:text-[#5B58DE] border border-slate-200'
-                    }`}
-                  >
-                    {letter}
-                  </button>
-                ))}
+              {/* Quick Alphabet Buttons for Fast 1-Click Filtering */}
+              <div className="flex items-center gap-1 overflow-x-auto pt-2.5 pb-1 scrollbar-none text-[11px]">
+                <span className="text-[10px] text-slate-400 font-bold uppercase shrink-0 mr-1">Abjad:</span>
+                {alphabetList.map((letter) => {
+                  const isCurrentFilter = searchTerm.toUpperCase() === letter;
+                  return (
+                    <button
+                      key={letter}
+                      type="button"
+                      onClick={() => {
+                        // Toggle filter
+                        setSearchTerm(isCurrentFilter ? '' : letter);
+                      }}
+                      className={`px-2.5 py-1 rounded-lg font-bold transition shrink-0 ${
+                        isCurrentFilter
+                          ? 'bg-[#5B58DE] text-white shadow-xs'
+                          : 'bg-white text-slate-600 hover:bg-indigo-50 hover:text-[#5B58DE] border border-slate-200'
+                      }`}
+                    >
+                      {letter}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
             {/* List of Categories */}
-            <div className="max-h-64 overflow-y-auto divide-y divide-slate-100 p-1">
+            <div className="max-h-64 overflow-y-auto divide-y divide-slate-100 p-1.5">
               {filteredCategories.length === 0 ? (
-                <div className="py-6 text-center text-xs text-slate-400">
-                  Tidak ditemukan kategori dengan kata kunci "{searchTerm}"
+                <div className="py-8 text-center text-xs text-slate-400">
+                  <p className="font-semibold text-slate-600">Tidak ada kategori yang cocok</p>
+                  <p className="mt-0.5">Coba ketik abjad tunggal seperti "T", "C", "G" atau nama sektor.</p>
                 </div>
               ) : (
                 filteredCategories.map((kat) => {
@@ -231,18 +258,18 @@ export const RationalityChecker = ({
                         !canAnalyze 
                           ? 'opacity-40 cursor-not-allowed bg-slate-50' 
                           : isSelected 
-                          ? 'bg-indigo-50/80 text-indigo-950 font-semibold' 
+                          ? 'bg-indigo-50 text-indigo-950 font-semibold' 
                           : 'hover:bg-slate-50 text-slate-700'
                       }`}
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         {/* Letter Badge */}
-                        <div className={`w-7 h-7 rounded-lg text-xs font-bold flex items-center justify-center shrink-0 ${
+                        <div className={`w-8 h-8 rounded-xl text-xs font-bold flex items-center justify-center shrink-0 ${
                           !canAnalyze 
                             ? 'bg-slate-200 text-slate-500'
                             : isSelected 
                             ? 'bg-[#5B58DE] text-white shadow-xs' 
-                            : 'bg-indigo-100/70 text-[#5B58DE]'
+                            : 'bg-indigo-100 text-[#5B58DE]'
                         }`}>
                           {kat.kode}
                         </div>
