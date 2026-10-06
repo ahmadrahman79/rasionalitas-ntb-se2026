@@ -5,11 +5,9 @@ import {
   TrendingDown, 
   AlertTriangle, 
   CheckCircle2, 
-  Layers,
-  ArrowUpRight,
   Info
 } from 'lucide-react';
-import { formatRupiah, formatDecimal } from '../utils/formatters';
+import { formatRupiah } from '../utils/formatters';
 
 export const ResultCard = ({ calculationResult }) => {
   const {
@@ -75,7 +73,7 @@ export const ResultCard = ({ calculationResult }) => {
           Hasil Nilai Tambah Bruto
         </h3>
         <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-50 text-[#5B58DE]">
-          Live Output
+          Output SE2026
         </span>
       </div>
 
@@ -120,30 +118,30 @@ export const ResultCard = ({ calculationResult }) => {
       {/* Mini Financial Breakdown Summary */}
       <div className="space-y-2.5 text-xs">
         <div className="flex items-center justify-between text-slate-600 py-1 border-b border-slate-100">
-          <span>Nilai Produksi / Penjualan :</span>
-          <span className="font-semibold text-slate-800">{formatRupiah(nilaiProduksi)}</span>
+          <span className="truncate pr-2">27. a. Pendapatan Barang & Jasa :</span>
+          <span className="font-semibold text-slate-800 shrink-0">{formatRupiah(nilaiProduksi)}</span>
         </div>
 
         {biayaBarangTerjual > 0 && (
           <div className="flex items-center justify-between text-slate-600 py-1 border-b border-slate-100">
-            <span>Biaya Beli Barang Terjual :</span>
-            <span className="font-semibold text-rose-600">- {formatRupiah(biayaBarangTerjual)}</span>
+            <span className="truncate pr-2">26. c. Pembelian Barang Terjual :</span>
+            <span className="font-semibold text-rose-600 shrink-0">- {formatRupiah(biayaBarangTerjual)}</span>
           </div>
         )}
 
         <div className="flex items-center justify-between text-slate-600 py-1 border-b border-slate-100 bg-indigo-50/40 px-2 rounded-lg font-semibold">
-          <span className="text-indigo-900">Output Bersih (Pembagi Rasio) :</span>
-          <span className="text-indigo-950">{formatRupiah(pendapatanBersihBarang)}</span>
+          <span className="text-indigo-900">Output Bersih (27.a - 26.c) :</span>
+          <span className="text-indigo-950 shrink-0">{formatRupiah(pendapatanBersihBarang)}</span>
         </div>
 
         <div className="flex items-center justify-between text-slate-600 py-1 border-b border-slate-100">
-          <span>Biaya Produksi (Bahan Baku) :</span>
-          <span className="font-semibold text-rose-600">- {formatRupiah(biayaProduksi)}</span>
+          <span className="truncate pr-2">26. b. Biaya Produksi :</span>
+          <span className="font-semibold text-rose-600 shrink-0">- {formatRupiah(biayaProduksi)}</span>
         </div>
 
         <div className="flex items-center justify-between text-slate-600 py-1 border-b border-slate-100">
-          <span>Biaya Operasional Usaha :</span>
-          <span className="font-semibold text-rose-600">- {formatRupiah(biayaOperasional)}</span>
+          <span className="truncate pr-2">26. d. Biaya Operasional :</span>
+          <span className="font-semibold text-rose-600 shrink-0">- {formatRupiah(biayaOperasional)}</span>
         </div>
 
         <div className="flex items-center justify-between pt-1 font-bold text-slate-800">
