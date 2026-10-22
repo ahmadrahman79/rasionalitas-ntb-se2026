@@ -2,10 +2,9 @@ import React from 'react';
 import { 
   Calculator, 
   Table, 
-  Layers, 
   BookOpen, 
-  Sparkles,
-  X
+  ExternalLink,
+  PanelLeftClose
 } from 'lucide-react';
 import { FlowerVaseIllustration } from './AestheticIllustrations';
 
@@ -13,8 +12,8 @@ export const Sidebar = ({
   activeTab, 
   setActiveTab, 
   historyCount = 0,
-  isMobileOpen,
-  setIsMobileOpen,
+  isOpen = true,
+  onClose,
   onOpenFormula
 }) => {
   const menuItems = [
@@ -29,21 +28,12 @@ export const Sidebar = ({
     },
     {
       id: 'table',
-      label: 'Tabel Standar SE2026',
+      label: 'Tabel Standar Rasio',
       desc: 'Rentang Wajar Kategori A–U',
       icon: Table,
-      badge: '19 Kategori',
+      badge: null,
       isActive: activeTab === 'table',
       action: () => setActiveTab('table')
-    },
-    {
-      id: 'simulations',
-      label: 'Simulasi Sektor',
-      desc: 'Preset Contoh Usaha',
-      icon: Layers,
-      badge: 4,
-      isActive: activeTab === 'simulations',
-      action: () => setActiveTab('simulations')
     },
     {
       id: 'formula',
@@ -58,74 +48,83 @@ export const Sidebar = ({
     },
   ];
 
+  const handleItemClick = (action) => {
+    action();
+    if (typeof window !== 'undefined' && window.innerWidth < 1024 && onClose) {
+      onClose();
+    }
+  };
+
   return (
     <>
-      {/* Mobile Backdrop */}
-      {isMobileOpen && (
+      {/* Mobile Backdrop when sidebar is open on smaller screens */}
+      {isOpen && (
         <div 
-          onClick={() => setIsMobileOpen(false)}
+          onClick={onClose}
           className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden transition-opacity"
+          aria-label="Tutup Sidebar"
         />
       )}
 
       {/* Sidebar Container */}
       <aside 
-        className={`fixed top-0 left-0 bottom-0 z-50 w-72 bg-[#5B58DE] text-white flex flex-col justify-between shadow-2xl transition-transform duration-300 ease-in-out lg:translate-x-0 overflow-y-auto overflow-x-hidden ${
-          isMobileOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed top-0 left-0 bottom-0 z-50 w-72 bg-[#5B58DE] text-white flex flex-col justify-between shadow-2xl transition-transform duration-300 ease-in-out ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        } overflow-y-auto overflow-x-hidden`}
       >
         {/* Top Section */}
-        <div className="p-5 sm:p-6 pb-2">
-          {/* Header Dashboard */}
-          <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
-            <div>
-              <span className="text-[10px] font-bold text-white/70 uppercase tracking-widest block">Dashboard</span>
-              <h1 className="text-base sm:text-lg font-extrabold tracking-tight text-white flex items-center gap-1.5 mt-0.5 leading-snug">
+        <div className="p-4 sm:p-5 pb-1">
+          {/* Header Dashboard - Tampilan Rapi dan Kompak */}
+          <div className="flex items-start justify-between mb-3.5 pb-2.5 border-b border-white/15">
+            <div className="min-w-0 pr-1">
+              <span className="text-[9px] font-bold text-white/70 uppercase tracking-widest block mb-0.5">
+                DASHBOARD
+              </span>
+              <h1 className="text-sm sm:text-base font-extrabold tracking-tight text-white leading-snug">
                 Rasionalitas Nilai Tambah Bruto
-                <Sparkles className="w-4 h-4 text-pink-300 animate-pulse shrink-0" />
               </h1>
-              <p className="text-xs text-white/90 font-bold mt-1 tracking-wide">
-                BPS Kabupaten Mempawah
-              </p>
-              <p className="text-[11px] text-white/70 font-medium mt-0.5">
-                Sensus Ekonomi 2026
-              </p>
+              <div className="mt-1.5 pt-1.5 border-t border-white/10">
+                <p className="text-xs text-white/95 font-bold tracking-wide">
+                  BPS Kabupaten Mempawah
+                </p>
+                <p className="text-[10px] text-white/70 font-medium">
+                  Sensus Ekonomi 2026
+                </p>
+              </div>
             </div>
 
-            {/* Mobile close button */}
+            {/* Collapse / Close button */}
             <button
-              onClick={() => setIsMobileOpen(false)}
-              className="lg:hidden p-2 text-white/80 hover:text-white rounded-xl hover:bg-white/10 transition"
-              aria-label="Tutup Menu"
+              onClick={onClose}
+              className="p-1.5 text-white/80 hover:text-white rounded-xl hover:bg-white/10 transition shrink-0"
+              title="Sembunyikan Sidebar"
+              aria-label="Sembunyikan Sidebar"
             >
-              <X className="w-5 h-5" />
+              <PanelLeftClose className="w-4.5 h-4.5" />
             </button>
           </div>
 
-          {/* Navigation Menu */}
-          <nav className="space-y-2">
+          {/* Navigation Menu (Ukuran lebih ramping & tidak memotong teks) */}
+          <nav className="space-y-1.5">
             {menuItems.map((item) => {
               const Icon = item.icon;
               return (
                 <button
                   key={item.id}
-                  onClick={() => {
-                    item.action();
-                    setIsMobileOpen(false);
-                  }}
-                  className={`w-full flex items-center justify-between px-3.5 py-3 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-200 text-left ${
+                  onClick={() => handleItemClick(item.action)}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-200 text-left ${
                     item.isActive
-                      ? 'bg-white text-[#5B58DE] shadow-lg font-bold translate-x-1'
+                      ? 'bg-white text-[#5B58DE] shadow-md font-bold translate-x-1'
                       : 'text-white/85 hover:text-white hover:bg-white/10'
                   }`}
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className={`p-2 rounded-xl shrink-0 ${item.isActive ? 'bg-indigo-50 text-[#5B58DE]' : 'bg-white/10 text-white'}`}>
-                      <Icon className="w-4 h-4" />
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className={`p-1.5 rounded-lg shrink-0 ${item.isActive ? 'bg-indigo-50 text-[#5B58DE]' : 'bg-white/10 text-white'}`}>
+                      <Icon className="w-3.5 h-3.5" />
                     </div>
                     <div className="min-w-0">
-                      <span className="block leading-tight truncate">{item.label}</span>
-                      <span className={`text-[10px] block mt-0.5 truncate font-normal ${item.isActive ? 'text-indigo-400 font-medium' : 'text-white/60'}`}>
+                      <span className="block leading-tight text-xs">{item.label}</span>
+                      <span className={`text-[10px] block mt-0.5 font-normal ${item.isActive ? 'text-indigo-400 font-medium' : 'text-white/60'}`}>
                         {item.desc}
                       </span>
                     </div>
@@ -133,7 +132,7 @@ export const Sidebar = ({
 
                   {item.badge !== null && (
                     <span
-                      className={`text-[10px] px-2 py-0.5 rounded-full font-bold shrink-0 ml-2 ${
+                      className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold shrink-0 ml-1.5 ${
                         item.isActive
                           ? 'bg-[#5B58DE]/15 text-[#5B58DE]'
                           : 'bg-white/20 text-white'
@@ -146,12 +145,64 @@ export const Sidebar = ({
               );
             })}
           </nav>
+
+          {/* Media Direct Link Section: YouTube & Spotify (Keep Chilled) */}
+          <div className="mt-3.5 pt-2.5 border-t border-white/15">
+            <span className="text-[9px] font-bold text-white/60 uppercase tracking-wider px-1 mb-1.5 block">
+              Keep Chilled
+            </span>
+            <div className="space-y-1.5">
+              {/* YouTube Direct Link */}
+              <a
+                href="https://www.youtube.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-between px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white text-white hover:text-slate-900 transition-all duration-200 group shadow-xs"
+                title="Buka YouTube"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-5.5 h-5.5 rounded-lg bg-red-600 flex items-center justify-center text-white shrink-0 shadow-xs p-1">
+                    <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <span className="block text-xs font-bold leading-tight">YouTube</span>
+                    <span className="text-[9px] text-white/70 group-hover:text-slate-500 block leading-tight">Tonton Video</span>
+                  </div>
+                </div>
+                <ExternalLink className="w-3 h-3 opacity-60 group-hover:opacity-100 text-white group-hover:text-slate-700" />
+              </a>
+
+              {/* Spotify Direct Link */}
+              <a
+                href="https://open.spotify.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-between px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white text-white hover:text-slate-900 transition-all duration-200 group shadow-xs"
+                title="Buka Spotify"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-5.5 h-5.5 rounded-lg bg-[#1DB954] flex items-center justify-center text-white shrink-0 shadow-xs p-1">
+                    <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.497 17.307a.75.75 0 0 1-1.03.247c-2.822-1.724-6.375-2.114-10.56-1.157a.75.75 0 1 1-.335-1.462c4.582-1.047 8.52-.607 11.678 1.342a.75.75 0 0 1 .247 1.03zm1.467-3.264a.938.938 0 0 1-1.288.309c-3.23-1.986-8.156-2.56-11.977-1.4a.937.937 0 1 1-.546-1.794c4.372-1.328 9.8-.687 13.502 1.597a.938.938 0 0 1 .309 1.288zm.126-3.41c-3.873-2.3-10.266-2.512-13.98-1.38a1.125 1.125 0 0 1-.652-2.155c4.27-1.296 11.33-1.048 15.8 1.606a1.125 1.125 0 1 1-1.168 1.93z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <span className="block text-xs font-bold leading-tight">Spotify</span>
+                    <span className="text-[9px] text-white/70 group-hover:text-slate-500 block leading-tight">Musik & Podcast</span>
+                  </div>
+                </div>
+                <ExternalLink className="w-3 h-3 opacity-60 group-hover:opacity-100 text-white group-hover:text-slate-700" />
+              </a>
+            </div>
+          </div>
         </div>
 
-        {/* Bottom Aesthetic Plant / Flower Vase Illustration */}
-        <div className="relative pt-2 flex flex-col items-center justify-end select-none mt-auto">
-          <FlowerVaseIllustration className="w-40 h-auto -mb-2 drop-shadow-md opacity-90" />
-          <div className="w-full text-center py-2.5 bg-[#4D4AC7]/70 text-[11px] font-bold text-white/90 tracking-wider uppercase border-t border-white/10">
+        {/* Bottom Aesthetic Plant / Flower Vase Illustration - Tidak tenggelam */}
+        <div className="relative pt-1 flex flex-col items-center justify-end select-none mt-auto shrink-0">
+          <FlowerVaseIllustration className="w-24 sm:w-28 h-auto drop-shadow-md opacity-90" />
+          <div className="w-full text-center py-1.5 bg-[#4D4AC7]/80 text-[10px] font-bold text-white/90 tracking-wider uppercase border-t border-white/10">
             BPS Kab Mempawah
           </div>
         </div>

@@ -17,7 +17,7 @@ import {
   exportHistoryToCSV,
   KATEGORI_LAPANGAN_USAHA
 } from './utils/formatters';
-import { Layers, Table, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Table, PanelLeftOpen } from 'lucide-react';
 
 // Form dimulai dalam keadaan bersih tanpa predefined contoh
 const INITIAL_FORM_STATE = {
@@ -32,7 +32,7 @@ const INITIAL_FORM_STATE = {
 const SAMPLE_PRESETS = {
   kuliner: {
     namaUsaha: 'Restoran & Katering Mempawah Rasa',
-    kategoriKode: 'I', // Penyediaan Akomodasi dan Makan Minum (Min 0.36, Max 0.69)
+    kategoriKode: 'I',
     nilaiProduksi: '150.000.000',
     biayaBarangTerjual: '',
     biayaProduksi: '55.000.000',
@@ -40,7 +40,7 @@ const SAMPLE_PRESETS = {
   },
   dagang: {
     namaUsaha: 'Toko Kelontong Berkah Mempawah',
-    kategoriKode: 'G', // Perdagangan Besar & Eceran (Min 0.64, Max 0.78)
+    kategoriKode: 'G',
     nilaiProduksi: '200.000.000',
     biayaBarangTerjual: '140.000.000',
     biayaProduksi: '5.000.000',
@@ -48,7 +48,7 @@ const SAMPLE_PRESETS = {
   },
   jasa: {
     namaUsaha: 'Studio Desain & Percetakan Digital Mempawah',
-    kategoriKode: 'J', // Informasi dan Komunikasi (Min 0.36, Max 0.73)
+    kategoriKode: 'J',
     nilaiProduksi: '85.000.000',
     biayaBarangTerjual: '',
     biayaProduksi: '12.000.000',
@@ -56,7 +56,7 @@ const SAMPLE_PRESETS = {
   },
   manufaktur: {
     namaUsaha: 'Sentra Pengolahan Hasil Laut Mempawah',
-    kategoriKode: 'C', // Industri Pengolahan (Min 0.15, Max 0.61)
+    kategoriKode: 'C',
     nilaiProduksi: '180.000.000',
     biayaBarangTerjual: '',
     biayaProduksi: '65.000.000',
@@ -68,7 +68,8 @@ export function App() {
   const [formData, setFormData] = useState(INITIAL_FORM_STATE);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('calculator');
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  // Sidebar bisa di-hide, default nya show
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isFormulaOpen, setIsFormulaOpen] = useState(false);
 
   // Riwayat dimulai dalam keadaan bersih tanpa data dummy
@@ -190,25 +191,41 @@ export function App() {
 
   return (
     <div className="min-h-screen bg-[#EFF2F9] text-slate-800 flex relative">
-      {/* Left Sidebar */}
+      {/* Left Sidebar (Bisa di-hide, default: show) */}
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         historyCount={history.length}
-        isMobileOpen={isMobileOpen}
-        setIsMobileOpen={setIsMobileOpen}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
         onOpenFormula={() => setIsFormulaOpen(true)}
       />
 
-      {/* Main Content Area */}
-      <div className="flex-1 lg:pl-72 flex flex-col min-w-0">
+      {/* Floating Re-open Sidebar Button saat sidebar disembunyikan */}
+      {!isSidebarOpen && (
+        <button
+          onClick={() => setIsSidebarOpen(true)}
+          className="fixed left-0 top-24 z-40 bg-[#5B58DE] hover:bg-[#4C49CC] text-white py-2.5 px-3 rounded-r-2xl shadow-xl flex items-center gap-1.5 transition-all duration-200 group border-y border-r border-indigo-400/40"
+          title="Tampilkan Sidebar"
+          aria-label="Tampilkan Sidebar"
+        >
+          <PanelLeftOpen className="w-5 h-5 group-hover:scale-110 transition-transform" />
+          <span className="text-xs font-bold pr-1 hidden sm:inline">Menu</span>
+        </button>
+      )}
+
+      {/* Main Content Area (Smooth expand saat sidebar di-hide) */}
+      <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out ${
+        isSidebarOpen ? 'lg:pl-72' : 'lg:pl-0'
+      }`}>
         <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-7xl mx-auto w-full pb-20">
           {/* Header Bar */}
           <Header
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             onOpenFormula={() => setIsFormulaOpen(true)}
-            onToggleMobileMenu={() => setIsMobileOpen(true)}
+            isSidebarOpen={isSidebarOpen}
+            onToggleSidebar={() => setIsSidebarOpen(prev => !prev)}
           />
 
           {/* Hero Profile / Overview Card */}
@@ -290,54 +307,10 @@ export function App() {
                 </table>
               </div>
             </div>
-          ) : activeTab === 'simulations' ? (
-            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-soft mb-6">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-[#5B58DE] flex items-center justify-center">
-                  <Layers className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-slate-800">Simulasi Sektor Usaha SE2026</h3>
-                  <p className="text-xs text-slate-500">Pilih sektor usaha untuk menguji rasionalitas nilai tambah standar</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {Object.entries(SAMPLE_PRESETS).map(([key, item]) => {
-                  const kat = KATEGORI_LAPANGAN_USAHA.find(k => k.kode === item.kategoriKode);
-                  return (
-                    <div key={key} className="p-5 rounded-2xl bg-[#FAF9FD] border border-slate-100 hover:border-indigo-200 transition">
-                      <div className="flex items-center justify-between mb-1">
-                        <h4 className="font-bold text-base text-slate-800">{item.namaUsaha}</h4>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700">
-                          Kategori {item.kategoriKode}
-                        </span>
-                      </div>
-                      <span className="text-xs text-[#5B58DE] font-semibold block mb-2">{kat?.singkat}</span>
-                      <div className="text-[11px] text-slate-500 bg-white p-2 rounded-xl border border-slate-100 mb-3">
-                        Rentang Wajar: <strong className="text-slate-800">{formatDecimal(kat?.min)} – {formatDecimal(kat?.max)}</strong>
-                      </div>
-                      <div className="space-y-1 text-xs text-slate-600 mb-4">
-                        <div className="flex justify-between"><span>27. a. Nilai Pendapatan:</span><strong>Rp {item.nilaiProduksi}</strong></div>
-                        {item.biayaBarangTerjual && <div className="flex justify-between"><span>26. c. Beli Terjual:</span><strong>Rp {item.biayaBarangTerjual}</strong></div>}
-                        <div className="flex justify-between"><span>26. b. Biaya Produksi:</span><strong>Rp {item.biayaProduksi}</strong></div>
-                        <div className="flex justify-between"><span>26. d. Biaya Operasional:</span><strong>Rp {item.biayaOperasional}</strong></div>
-                      </div>
-                      <button
-                        onClick={() => handleLoadPreset(key)}
-                        className="w-full py-2 bg-[#5B58DE] text-white rounded-xl text-xs font-bold hover:bg-[#4C49CC] transition flex items-center justify-center gap-1.5"
-                      >
-                        <span>Gunakan Template Ini</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
           ) : (
             /* All-in-One Dashboard: Form Input (Left) & Floating Result Card (Right) */
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6 items-start">
+            /* Grid container without items-start so the right column stretches and ResultCard can stick smoothly all the way down to HistoryList */
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
               {/* Left Column: Form Input (KBLI at top, then 26 & 27) */}
               <div className="lg:col-span-7 xl:col-span-8">
                 <CalculatorForm
@@ -348,13 +321,15 @@ export function App() {
                 />
               </div>
 
-              {/* Right Column: Sticky Floating Result Card (Kotak Kaidah SE2026 dihilangkan) */}
-              <div className="lg:col-span-5 xl:col-span-4">
-                <ResultCard 
-                  calculationResult={currentCalculation} 
-                  onExportCSV={() => exportHistoryToCSV(history)}
-                  historyLength={history.length}
-                />
+              {/* Right Column: Sticky Floating Result Card (Melayang sampai diatas Riwayat) */}
+              <div className="lg:col-span-5 xl:col-span-4 relative">
+                <div className="sticky top-6">
+                  <ResultCard 
+                    calculationResult={currentCalculation} 
+                    onExportCSV={() => exportHistoryToCSV(history)}
+                    historyLength={history.length}
+                  />
+                </div>
               </div>
             </div>
           )}

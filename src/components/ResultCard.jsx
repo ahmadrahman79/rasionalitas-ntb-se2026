@@ -6,8 +6,7 @@ import {
   AlertTriangle, 
   CheckCircle2, 
   Info,
-  FileSpreadsheet,
-  Layers
+  FileSpreadsheet
 } from 'lucide-react';
 import { formatRupiah, formatDecimal } from '../utils/formatters';
 
@@ -85,16 +84,15 @@ export const ResultCard = ({ calculationResult, onExportCSV, historyLength = 0 }
   const currentPos = getPercentPos(rasio);
 
   return (
-    <div className="bg-white rounded-3xl p-6 md:p-7 shadow-soft mb-6 sticky top-6 z-20 border border-slate-100">
-      {/* Title Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-base md:text-lg font-bold text-slate-800 tracking-tight flex items-center gap-1.5">
-          <Calculator className="w-5 h-5 text-[#5B58DE]" />
-          <span>Hasil Nilai Tambah Bruto</span>
+    <div className="bg-white rounded-3xl p-6 md:p-7 shadow-soft border border-slate-100">
+      {/* Title Header - Objek Output SE2026 telah dihilangkan */}
+      <div className="flex items-center gap-2 mb-4 pb-2 border-b border-slate-100">
+        <div className="w-8 h-8 rounded-xl bg-indigo-50 text-[#5B58DE] flex items-center justify-center shrink-0">
+          <Calculator className="w-4.5 h-4.5" />
+        </div>
+        <h3 className="text-base md:text-lg font-bold text-slate-800 tracking-tight">
+          Hasil Nilai Tambah Bruto
         </h3>
-        <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-50 text-[#5B58DE]">
-          Output SE2026
-        </span>
       </div>
 
       {/* Main Result Display Box */}
@@ -237,7 +235,7 @@ export const ResultCard = ({ calculationResult, onExportCSV, historyLength = 0 }
             className="w-full py-2.5 px-3 rounded-xl bg-slate-50 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 text-xs font-semibold border border-slate-200 hover:border-emerald-200 transition flex items-center justify-center gap-1.5 shadow-xs"
           >
             <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Unduh Riwayat Perhitungan ({historyLength} CSV)</span>
+            <span>Unduh Riwayat ({historyLength} CSV)</span>
           </button>
         </div>
       )}

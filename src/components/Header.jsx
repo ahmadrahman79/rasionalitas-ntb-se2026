@@ -1,29 +1,35 @@
 import React from 'react';
-import { Search, Bell, Menu, HelpCircle } from 'lucide-react';
+import { Search, Bell, HelpCircle, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 
 export const Header = ({ 
   searchQuery, 
   setSearchQuery, 
   onOpenFormula, 
-  onToggleMobileMenu 
+  isSidebarOpen = true,
+  onToggleSidebar 
 }) => {
   return (
-    <header className="bg-white rounded-3xl p-4 md:px-8 md:py-4 shadow-soft flex items-center justify-between gap-4 mb-6">
-      {/* Left Title & Mobile Trigger */}
-      <div className="flex items-center gap-3">
+    <header className="bg-white rounded-3xl p-4 md:px-7 md:py-4 shadow-soft flex items-center justify-between gap-4 mb-6">
+      {/* Left Title & Sidebar Toggle Button */}
+      <div className="flex items-center gap-3 min-w-0">
         <button
-          onClick={onToggleMobileMenu}
-          className="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition"
-          aria-label="Toggle Menu"
+          onClick={onToggleSidebar}
+          className="p-2 rounded-xl text-slate-600 hover:text-[#5B58DE] hover:bg-indigo-50 border border-slate-200/80 transition-all shadow-xs flex items-center justify-center shrink-0"
+          title={isSidebarOpen ? "Sembunyikan Sidebar" : "Tampilkan Sidebar"}
+          aria-label="Toggle Sidebar"
         >
-          <Menu className="w-5 h-5" />
+          {isSidebarOpen ? (
+            <PanelLeftClose className="w-5 h-5 text-slate-700 hover:text-[#5B58DE]" />
+          ) : (
+            <PanelLeftOpen className="w-5 h-5 text-[#5B58DE]" />
+          )}
         </button>
 
-        <div>
-          <h2 className="text-lg md:text-xl font-extrabold text-slate-800 tracking-tight leading-snug">
+        <div className="min-w-0">
+          <h2 className="text-base sm:text-lg md:text-xl font-extrabold text-slate-800 tracking-tight leading-snug truncate sm:overflow-visible">
             Modul Simulasi Perhitungan Nilai Tambah Bruto
           </h2>
-          <p className="text-xs text-slate-400 hidden sm:block">
+          <p className="text-xs text-slate-400 hidden sm:block truncate">
             Uji Rasionalitas Nilai Tambah Bruto • BPS Kabupaten Mempawah • SE2026
           </p>
         </div>
