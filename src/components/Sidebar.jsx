@@ -20,7 +20,7 @@ export const Sidebar = ({
   const menuItems = [
     {
       id: 'calculator',
-      label: 'Kalkulator & Uji NTB',
+      label: 'Simulasi Nilai Tambah',
       desc: 'All-in-One Dashboard',
       icon: Calculator,
       badge: historyCount > 0 ? `${historyCount}` : null,
@@ -79,12 +79,17 @@ export const Sidebar = ({
           {/* Header Dashboard */}
           <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
             <div>
-              <span className="text-[11px] font-semibold text-white/70 uppercase tracking-wider block">Dashboard</span>
-              <h1 className="text-xl font-extrabold tracking-tight text-white flex items-center gap-1.5 mt-0.5">
-                Rasionalitas NTB
-                <Sparkles className="w-4 h-4 text-pink-300 animate-pulse" />
+              <span className="text-[10px] font-bold text-white/70 uppercase tracking-widest block">Dashboard</span>
+              <h1 className="text-base sm:text-lg font-extrabold tracking-tight text-white flex items-center gap-1.5 mt-0.5 leading-snug">
+                Rasionalitas Nilai Tambah Bruto
+                <Sparkles className="w-4 h-4 text-pink-300 animate-pulse shrink-0" />
               </h1>
-              <p className="text-xs text-white/80 font-medium">Sensus Ekonomi 2026</p>
+              <p className="text-xs text-white/90 font-bold mt-1 tracking-wide">
+                BPS Kabupaten Mempawah
+              </p>
+              <p className="text-[11px] text-white/70 font-medium mt-0.5">
+                Sensus Ekonomi 2026
+              </p>
             </div>
 
             {/* Mobile close button */}
@@ -146,8 +151,8 @@ export const Sidebar = ({
         {/* Bottom Aesthetic Plant / Flower Vase Illustration */}
         <div className="relative pt-2 flex flex-col items-center justify-end select-none mt-auto">
           <FlowerVaseIllustration className="w-40 h-auto -mb-2 drop-shadow-md opacity-90" />
-          <div className="w-full text-center py-2 bg-[#4D4AC7]/60 text-[10px] font-medium text-white/75 tracking-wider uppercase border-t border-white/10">
-            SE2026 • BPS NTB Standard
+          <div className="w-full text-center py-2.5 bg-[#4D4AC7]/70 text-[11px] font-bold text-white/90 tracking-wider uppercase border-t border-white/10">
+            BPS Kab Mempawah
           </div>
         </div>
       </aside>

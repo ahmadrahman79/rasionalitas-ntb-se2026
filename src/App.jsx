@@ -5,34 +5,33 @@ import { Header } from './components/Header';
 import { HeroProfile } from './components/HeroProfile';
 import { CalculatorForm } from './components/CalculatorForm';
 import { ResultCard } from './components/ResultCard';
-import { GuideCard } from './components/GuideCard';
-import { RationalityChecker } from './components/RationalityChecker';
 import { HistoryList } from './components/HistoryList';
 import { FormulaModal } from './components/FormulaModal';
+import { DeskLampIllustration } from './components/AestheticIllustrations';
 import { 
   calculateNTB, 
   parseRupiah, 
-  formatRupiah, 
   formatDecimal,
   formatInputCurrency, 
   formatIndonesianDate, 
   exportHistoryToCSV,
   KATEGORI_LAPANGAN_USAHA
 } from './utils/formatters';
-import { Layers, Table, CheckCircle2, ArrowRight, Sparkles } from 'lucide-react';
+import { Layers, Table, CheckCircle2, ArrowRight } from 'lucide-react';
 
+// Form dimulai dalam keadaan bersih tanpa predefined contoh
 const INITIAL_FORM_STATE = {
   namaUsaha: '',
   kategoriKode: 'C',
-  nilaiProduksi: '120.000.000',
+  nilaiProduksi: '',
   biayaBarangTerjual: '',
-  biayaProduksi: '45.000.000',
-  biayaOperasional: '25.000.000',
+  biayaProduksi: '',
+  biayaOperasional: '',
 };
 
 const SAMPLE_PRESETS = {
   kuliner: {
-    namaUsaha: 'Restoran & Katering Lombok Rasa',
+    namaUsaha: 'Restoran & Katering Mempawah Rasa',
     kategoriKode: 'I', // Penyediaan Akomodasi dan Makan Minum (Min 0.36, Max 0.69)
     nilaiProduksi: '150.000.000',
     biayaBarangTerjual: '',
@@ -40,7 +39,7 @@ const SAMPLE_PRESETS = {
     biayaOperasional: '25.000.000',
   },
   dagang: {
-    namaUsaha: 'Toko Kelontong Berkah Sejahtera',
+    namaUsaha: 'Toko Kelontong Berkah Mempawah',
     kategoriKode: 'G', // Perdagangan Besar & Eceran (Min 0.64, Max 0.78)
     nilaiProduksi: '200.000.000',
     biayaBarangTerjual: '140.000.000',
@@ -48,7 +47,7 @@ const SAMPLE_PRESETS = {
     biayaOperasional: '12.000.000',
   },
   jasa: {
-    namaUsaha: 'Studio Desain & Percetakan Digital',
+    namaUsaha: 'Studio Desain & Percetakan Digital Mempawah',
     kategoriKode: 'J', // Informasi dan Komunikasi (Min 0.36, Max 0.73)
     nilaiProduksi: '85.000.000',
     biayaBarangTerjual: '',
@@ -56,7 +55,7 @@ const SAMPLE_PRESETS = {
     biayaOperasional: '22.000.000',
   },
   manufaktur: {
-    namaUsaha: 'Sentra Tenun Ikat Tradisional NTB',
+    namaUsaha: 'Sentra Pengolahan Hasil Laut Mempawah',
     kategoriKode: 'C', // Industri Pengolahan (Min 0.15, Max 0.61)
     nilaiProduksi: '180.000.000',
     biayaBarangTerjual: '',
@@ -71,60 +70,22 @@ export function App() {
   const [activeTab, setActiveTab] = useState('calculator');
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isFormulaOpen, setIsFormulaOpen] = useState(false);
+
+  // Riwayat dimulai dalam keadaan bersih tanpa data dummy
   const [history, setHistory] = useState(() => {
     try {
-      const saved = localStorage.getItem('ntb_history_se2026_v2');
+      const saved = localStorage.getItem('ntb_history_se2026_mempawah');
       if (saved) return JSON.parse(saved);
     } catch (e) {
       console.error(e);
     }
-    // Default initial mock history
-    return [
-      {
-        id: 'hist-1',
-        namaUsaha: 'Sentra Tenun Ikat Tradisional NTB',
-        kategoriKode: 'C',
-        kategoriNama: 'Kategori C - Industri Pengolahan',
-        kategoriMin: 0.15,
-        kategoriMax: 0.61,
-        nilaiProduksi: 180000000,
-        biayaBarangTerjual: 0,
-        biayaProduksi: 65000000,
-        biayaOperasional: 35000000,
-        nilaiTambah: 80000000,
-        rasio: 0.4444,
-        rasioFormatted: '0,44',
-        statusLabel: 'Wajar (Rasional Sesuai SE2026)',
-        statusColor: 'green',
-        timestamp: new Date().toISOString(),
-        timestampFormatted: 'Hari ini, 09:30',
-      },
-      {
-        id: 'hist-2',
-        namaUsaha: 'Toko Kelontong Berkah Sejahtera',
-        kategoriKode: 'G',
-        kategoriNama: 'Kategori G - Perdagangan Besar & Eceran',
-        kategoriMin: 0.64,
-        kategoriMax: 0.78,
-        nilaiProduksi: 200000000,
-        biayaBarangTerjual: 140000000,
-        biayaProduksi: 5000000,
-        biayaOperasional: 12000000,
-        nilaiTambah: 43000000,
-        rasio: 0.7167,
-        rasioFormatted: '0,72',
-        statusLabel: 'Wajar (Rasional Sesuai SE2026)',
-        statusColor: 'green',
-        timestamp: new Date(Date.now() - 86400000).toISOString(),
-        timestampFormatted: 'Kemarin, 14:15',
-      }
-    ];
+    return [];
   });
 
   // Save history to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem('ntb_history_se2026_v2', JSON.stringify(history));
+      localStorage.setItem('ntb_history_se2026_mempawah', JSON.stringify(history));
     } catch (e) {
       console.error(e);
     }
@@ -228,7 +189,7 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#EFF2F9] text-slate-800 flex">
+    <div className="min-h-screen bg-[#EFF2F9] text-slate-800 flex relative">
       {/* Left Sidebar */}
       <Sidebar
         activeTab={activeTab}
@@ -241,7 +202,7 @@ export function App() {
 
       {/* Main Content Area */}
       <div className="flex-1 lg:pl-72 flex flex-col min-w-0">
-        <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-7xl mx-auto w-full">
+        <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-7xl mx-auto w-full pb-20">
           {/* Header Bar */}
           <Header
             searchQuery={searchQuery}
@@ -267,7 +228,7 @@ export function App() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-slate-800">Tabel Standar Rentang Wajar Rasio NTB (SE2026)</h3>
-                    <p className="text-xs text-slate-500">Rentang nilai batas MIN & MAX per Kategori Lapangan Usaha (KBLI)</p>
+                    <p className="text-xs text-slate-500">Rentang nilai batas MIN & MAX per Kategori Lapangan Usaha (KBLI) • BPS Kabupaten Mempawah</p>
                   </div>
                 </div>
 
@@ -357,10 +318,10 @@ export function App() {
                         Rentang Wajar: <strong className="text-slate-800">{formatDecimal(kat?.min)} – {formatDecimal(kat?.max)}</strong>
                       </div>
                       <div className="space-y-1 text-xs text-slate-600 mb-4">
-                        <div className="flex justify-between"><span>Nilai Produksi:</span><strong>Rp {item.nilaiProduksi}</strong></div>
-                        {item.biayaBarangTerjual && <div className="flex justify-between"><span>Beli Terjual:</span><strong>Rp {item.biayaBarangTerjual}</strong></div>}
-                        <div className="flex justify-between"><span>Biaya Produksi:</span><strong>Rp {item.biayaProduksi}</strong></div>
-                        <div className="flex justify-between"><span>Biaya Ops:</span><strong>Rp {item.biayaOperasional}</strong></div>
+                        <div className="flex justify-between"><span>27. a. Nilai Pendapatan:</span><strong>Rp {item.nilaiProduksi}</strong></div>
+                        {item.biayaBarangTerjual && <div className="flex justify-between"><span>26. c. Beli Terjual:</span><strong>Rp {item.biayaBarangTerjual}</strong></div>}
+                        <div className="flex justify-between"><span>26. b. Biaya Produksi:</span><strong>Rp {item.biayaProduksi}</strong></div>
+                        <div className="flex justify-between"><span>26. d. Biaya Operasional:</span><strong>Rp {item.biayaOperasional}</strong></div>
                       </div>
                       <button
                         onClick={() => handleLoadPreset(key)}
@@ -375,37 +336,26 @@ export function App() {
               </div>
             </div>
           ) : (
-            /* All-in-One Dashboard: Form + Result + Uji Kewajaran Sektor + Riwayat Perhitungan */
-            <div className="space-y-6 mb-6">
-              {/* Top Row: Form Input (Left) & Result + Guide Cards (Right) */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                {/* Left Column: Form Input (Span 7 or 8) */}
-                <div className="lg:col-span-7 xl:col-span-8">
-                  <CalculatorForm
-                    formData={formData}
-                    setFormData={setFormData}
-                    onCalculateAndSave={handleCalculateAndSave}
-                    onReset={handleResetForm}
-                  />
-                </div>
-
-                {/* Right Column: Result Card & Guide Card (Span 5 or 4) */}
-                <div className="lg:col-span-5 xl:col-span-4 space-y-6">
-                  <ResultCard calculationResult={currentCalculation} />
-                  <GuideCard
-                    onOpenFormula={() => setIsFormulaOpen(true)}
-                    onExportCSV={() => exportHistoryToCSV(history)}
-                    historyLength={history.length}
-                  />
-                </div>
+            /* All-in-One Dashboard: Form Input (Left) & Floating Result Card (Right) */
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6 items-start">
+              {/* Left Column: Form Input (KBLI at top, then 26 & 27) */}
+              <div className="lg:col-span-7 xl:col-span-8">
+                <CalculatorForm
+                  formData={formData}
+                  setFormData={setFormData}
+                  onCalculateAndSave={handleCalculateAndSave}
+                  onReset={handleResetForm}
+                />
               </div>
 
-              {/* Kolom Cek Kewajaran Lapangan Usaha (Searchable Combobox & Range Bar) */}
-              <RationalityChecker
-                kategoriKode={formData.kategoriKode || 'C'}
-                setKategoriKode={(code) => setFormData(prev => ({ ...prev, kategoriKode: code }))}
-                calculationResult={currentCalculation}
-              />
+              {/* Right Column: Sticky Floating Result Card (Kotak Kaidah SE2026 dihilangkan) */}
+              <div className="lg:col-span-5 xl:col-span-4">
+                <ResultCard 
+                  calculationResult={currentCalculation} 
+                  onExportCSV={() => exportHistoryToCSV(history)}
+                  historyLength={history.length}
+                />
+              </div>
             </div>
           )}
 
@@ -421,7 +371,7 @@ export function App() {
 
           {/* Footer branding */}
           <footer className="mt-8 text-center text-xs text-slate-400 py-4">
-            <p>Kalkulator Rasionalitas NTB SE2026 • Dirancang untuk Kemudahan Validasi Sensus Ekonomi 2026</p>
+            <p>Modul Simulasi Perhitungan Nilai Tambah Bruto • BPS Kabupaten Mempawah • SE2026</p>
             <p className="mt-1 text-slate-500">
               Dibuat oleh{' '}
               <a 
@@ -435,6 +385,14 @@ export function App() {
             </p>
           </footer>
         </main>
+      </div>
+
+      {/* Persistent Floating Desk Lamp in bottom-right corner (terlihat terus tanpa mengganggu klik/info) */}
+      <div 
+        className="fixed bottom-0 right-3 sm:right-6 pointer-events-none select-none z-30 hidden md:block"
+        title="BPS Mempawah"
+      >
+        <DeskLampIllustration className="w-28 sm:w-32 lg:w-36 h-auto drop-shadow-xl opacity-90 transition-opacity" />
       </div>
 
       {/* Formula Explanation Modal */}

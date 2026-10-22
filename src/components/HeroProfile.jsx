@@ -6,11 +6,8 @@ import {
   BadgePercent, 
   Coins, 
   Edit3, 
-  Globe, 
   Share2, 
-  Sparkles, 
-  FileSpreadsheet, 
-  CheckCircle2
+  Sparkles
 } from 'lucide-react';
 
 export const HeroProfile = ({ 
@@ -33,7 +30,7 @@ export const HeroProfile = ({
                 <Coins className="w-6 h-6" />
               </div>
               <span className="text-[11px] font-bold text-slate-800 tracking-tight">SE2026</span>
-              <span className="text-[9px] font-semibold text-[#5B58DE] -mt-0.5">NTB CHECKER</span>
+              <span className="text-[9px] font-semibold text-[#5B58DE] -mt-0.5">BPS MEMPAWAH</span>
             </div>
           </div>
 
@@ -50,9 +47,9 @@ export const HeroProfile = ({
             <div>
               <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-brand-50 text-[#5B58DE] text-xs font-semibold mb-1">
                 <Sparkles className="w-3 h-3" />
-                <span>Modul Validasi Data Ekonomi</span>
+                <span>Modul Validasi Data Ekonomi Sensus</span>
               </div>
-              <h2 className="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight">
+              <h2 className="text-xl md:text-2xl lg:text-3xl font-extrabold text-slate-800 tracking-tight">
                 Rasionalitas Nilai Tambah Bruto
               </h2>
             </div>
@@ -69,7 +66,7 @@ export const HeroProfile = ({
             </div>
           </div>
 
-          {/* Info Details Grid (Like Clara Martin's details) */}
+          {/* Info Details Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-6 text-xs md:text-sm text-slate-600 mb-5">
             <div className="flex items-center justify-center md:justify-start gap-2.5">
               <Calendar className="w-4 h-4 text-slate-400 shrink-0" />
@@ -78,12 +75,12 @@ export const HeroProfile = ({
 
             <div className="flex items-center justify-center md:justify-start gap-2.5">
               <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
-              <span>Cakupan : <strong className="text-slate-800 font-semibold">NTB & Seluruh Indonesia</strong></span>
+              <span>Wilayah : <strong className="text-slate-800 font-semibold">BPS Kabupaten Mempawah</strong></span>
             </div>
 
             <div className="flex items-center justify-center md:justify-start gap-2.5">
               <Layers className="w-4 h-4 text-slate-400 shrink-0" />
-              <span>Metode : <strong className="text-slate-800 font-semibold">Output Bersih - Biaya Antara</strong></span>
+              <span>Metode : <strong className="text-slate-800 font-semibold">(27.a - 26.c) - 26.b - 26.d</strong></span>
             </div>
 
             <div className="flex items-center justify-center md:justify-start gap-2.5">
@@ -97,7 +94,7 @@ export const HeroProfile = ({
             </div>
           </div>
 
-          {/* Social / Quick Action Circular Buttons (Matching the design icon bar) */}
+          {/* Social / Quick Action Circular Buttons */}
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5 pt-2 border-t border-slate-100">
             <button
               onClick={() => onLoadPreset('kuliner')}

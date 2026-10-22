@@ -20,11 +20,11 @@ export const Header = ({
         </button>
 
         <div>
-          <h2 className="text-xl md:text-2xl font-bold text-slate-800 tracking-tight">
-            Kalkulator NTB
+          <h2 className="text-lg md:text-xl font-extrabold text-slate-800 tracking-tight leading-snug">
+            Modul Simulasi Perhitungan Nilai Tambah Bruto
           </h2>
           <p className="text-xs text-slate-400 hidden sm:block">
-            Uji Rasionalitas Nilai Tambah Bruto • Sensus Ekonomi 2026
+            Uji Rasionalitas Nilai Tambah Bruto • BPS Kabupaten Mempawah • SE2026
           </p>
         </div>
       </div>
